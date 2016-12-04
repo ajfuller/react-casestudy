@@ -10,7 +10,6 @@ import { IntlProvider } from 'react-intl';
 import { HomePage, mapDispatchToProps } from '../index';
 import { changeUsername } from '../actions';
 import { loadRepos } from '../../App/actions';
-import RepoListItem from 'containers/RepoListItem';
 import List from 'components/List';
 import LoadingIndicator from 'components/LoadingIndicator';
 
@@ -52,25 +51,6 @@ describe('<HomePage />', () => {
     expect(submitSpy).toHaveBeenCalled();
   });
 
-  it('should render the repositories if loading was successful', () => {
-    const repos = [{
-      owner: {
-        login: 'mxstbr',
-      },
-      html_url: 'https://github.com/mxstbr/react-boilerplate',
-      name: 'react-boilerplate',
-      open_issues_count: 20,
-      full_name: 'mxstbr/react-boilerplate',
-    }];
-    const renderedComponent = shallow(
-      <HomePage
-        repos={repos}
-        error={false}
-      />
-    );
-
-    expect(renderedComponent.contains(<List items={repos} component={RepoListItem} />)).toEqual(true);
-  });
 
   describe('mapDispatchToProps', () => {
     describe('onChangeUsername', () => {

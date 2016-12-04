@@ -11,21 +11,21 @@ import Button from '../../components/Button';
 function QuantitySelector({ quantity = 1, updateQuantity }) {
   return (
     <Row middle="xs">
-      <Col xs style={{flex: "0 0 33px"}}>
-        <Button 
-          style={{borderRadius: '50%'}}
+      <Col xs style={{ flex: '0 0 33px' }}>
+        <Button
+          style={{ borderRadius: '50%' }}
           onClick={() => updateQuantity(-1)}
           aria-label="decrease quantity"
         >
           -
         </Button>
       </Col>
-      <Col xs style={{flex: "0 0 33px"}}>
-        <span style={{textAlign: "center"}}>{quantity}</span>
+      <Col xs style={{ flex: '0 0 33px' }}>
+        <span style={{ textAlign: 'center' }}>{quantity}</span>
       </Col>
-      <Col xs style={{flex: "0 0 33px"}}>
+      <Col xs style={{ flex: '0 0 33px' }}>
         <Button
-          style={{borderRadius: '50%'}}
+          style={{ borderRadius: '50%' }}
           onClick={() => updateQuantity(1)}
           aria-label="increase quantity"
         >
@@ -35,5 +35,10 @@ function QuantitySelector({ quantity = 1, updateQuantity }) {
     </Row>
   );
 }
+
+QuantitySelector.propTypes = {
+  updateQuantity: React.PropTypes.func.isRequired,
+  quantity: React.PropTypes.num,
+};
 
 export default QuantitySelector;
