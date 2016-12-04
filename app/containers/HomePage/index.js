@@ -59,10 +59,7 @@ export default class HomePage extends React.Component {
     const item = {
       price: itemData.Offers[0].OfferPrice[0].formattedPriceValue,
       priceQualifier: itemData.Offers[0].OfferPrice[0].priceQualifier,
-      images: {
-        primary: itemData.Images[0].PrimaryImage[0].image,
-        alt: itemData.Images[0].AlternateImages.map(alt => alt.image)
-      },
+      images: [itemData.Images[0].PrimaryImage[0].image].concat(itemData.Images[0].AlternateImages.map(alt => alt.image)),
       promos: itemData.Promotions.map(promo => (
         promo.Description[0].shortDescription
       )),
@@ -86,10 +83,9 @@ export default class HomePage extends React.Component {
             </Col>
             <Col xs={12}>
               <ProductCarousel>
-                <img src={item.images.primary} />
                 {
-                  item.images.alt.map((image, index) => {
-                    return <img key={`${image}${index}`} src={image} height="30" width="30" />
+                  item.images.map((image, index) => {
+                    return <img key={`${image}${index}`} src={image} height="300" width="300" alt="" />
                   })
                 }
               </ProductCarousel>

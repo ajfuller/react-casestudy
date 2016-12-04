@@ -1,0 +1,11 @@
+.carousel--thumbnails {
+  margin: 15px -15px;
+  display: block;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+.carousel--thumbnail img {
+  width: 80px;
+  height: 100%;
+}

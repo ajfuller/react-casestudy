@@ -15,10 +15,6 @@ import Footer from 'components/Footer';
 
 const AppWrapper = styled.div`
   max-width: 1200px;
-  margin: 0 auto;
-  display: flex;
-  min-height: 100%;
-  padding: 0 15px;
 `;
 
 function App(props) {
