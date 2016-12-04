@@ -21,8 +21,7 @@ class ProductCarousel extends React.Component {
       selectedItem: newIndex,
     });
   }
-  /* eslint-disable jsx-a11y/href-no-hash */
-  /* Ideally we wouldn't need to disable this, but our internal component is not ready for release yet */
+
   render() {
     const { selectedItem } = this.state;
     return (
@@ -35,7 +34,7 @@ class ProductCarousel extends React.Component {
             <a
               key={index}
               className="carousel--thumbnail"
-              href="#"
+              href={`#carousel-${index}`}
               onClick={() => this.updateImage(index)}
             >
               {child}
