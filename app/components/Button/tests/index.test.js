@@ -10,9 +10,10 @@ import React from 'react';
 
 const handleRoute = () => {};
 const href = 'http://mxstbr.com';
+const id = 'testButton';
 const children = (<h1>Test</h1>);
 const renderComponent = (props = {}) => mount(
-  <Button href={href} {...props}>
+  <Button id={id} href={href} {...props}>
     {children}
   </Button>
 );
@@ -43,6 +44,11 @@ describe('<Button />', () => {
   it('should have a className attribute', () => {
     const renderedComponent = renderComponent();
     expect(renderedComponent.find('a').prop('className')).toExist();
+  });
+
+  it('should have an id attribute', () => {
+    const renderedComponent = renderComponent();
+    expect(renderedComponent.find('a').prop('id')).toExist();
   });
 
   it('should not adopt a type attribute when rendering an <a> tag', () => {

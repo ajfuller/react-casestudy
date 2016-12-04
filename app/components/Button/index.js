@@ -15,7 +15,7 @@ import Wrapper from './Wrapper';
 function Button(props) {
   // Render an anchor tag
   let button = (
-    <A href={props.href} onClick={props.onClick}>
+    <A id={props.id} href={props.href} onClick={props.onClick}>
       {Children.toArray(props.children)}
     </A>
   );
@@ -37,6 +37,7 @@ function Button(props) {
 }
 
 Button.propTypes = {
+  id: PropTypes.string,
   handleRoute: PropTypes.func,
   href: PropTypes.string,
   onClick: PropTypes.func,

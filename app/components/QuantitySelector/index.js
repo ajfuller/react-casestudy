@@ -38,7 +38,7 @@ function QuantitySelector({ quantity = 1, updateQuantity }) {
 
 QuantitySelector.propTypes = {
   updateQuantity: React.PropTypes.func.isRequired,
-  quantity: React.PropTypes.num,
+  quantity: React.PropTypes.number,
 };
 
 export default QuantitySelector;

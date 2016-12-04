@@ -5,7 +5,18 @@
  */
 
 import React from 'react';
-import 'style!css!./ProductCarousel.css';
+
+const carouselStyles = {
+  margin: '15px -15px',
+  display: 'block',
+  overflowX: 'auto',
+  whiteSpace: 'nowrap',
+};
+
+const thumbnailStyles = {
+  width: '80px',
+  height: '100%',
+};
 
 class ProductCarousel extends React.Component {
   constructor(props) {
@@ -27,17 +38,16 @@ class ProductCarousel extends React.Component {
     return (
       <div style={{ textAlign: 'center' }}>
         <div className="carousel--selectedImage">
-          {this.props.children[selectedItem]}
+          <img src={this.props.images[selectedItem]} height="500" width="500" alt="" />
         </div>
-        <div className="carousel--thumbnails">
-          {this.props.children.map((child, index) => (
+        <div style={carouselStyles}>
+          {this.props.images.map((image, index) => (
             <a
               key={index}
-              className="carousel--thumbnail"
               href={`#carousel-${index}`}
               onClick={() => this.updateImage(index)}
             >
-              {child}
+              <img src={image} height="120" width="120" alt="" style={thumbnailStyles} />
             </a>
           ))}
         </div>
@@ -47,7 +57,7 @@ class ProductCarousel extends React.Component {
 }
 
 ProductCarousel.propTypes = {
-  children: React.PropTypes.node,
+  images: React.PropTypes.array,
 };
 
 export default ProductCarousel;

@@ -3,93 +3,50 @@
  */
 
 import expect from 'expect';
-import { shallow, mount } from 'enzyme';
+import { mount } from 'enzyme';
 import React from 'react';
 
-import { IntlProvider } from 'react-intl';
-import { HomePage, mapDispatchToProps } from '../index';
-import { changeUsername } from '../actions';
-import { loadRepos } from '../../App/actions';
-import List from 'components/List';
-import LoadingIndicator from 'components/LoadingIndicator';
-
+import HomePage from '../index';
+// Our component is already consuming the fixture data
+// Otherwise we would pass that here into the component to simulate the way
+// that redux would be passing through as props
 describe('<HomePage />', () => {
-  it('should render the loading indicator when its loading', () => {
-    const renderedComponent = shallow(
-      <HomePage loading />
-    );
-    expect(renderedComponent.contains(<List component={LoadingIndicator} />)).toEqual(true);
-  });
-
-  it('should render an error if loading failed', () => {
+  it('should render the base component', () => {
     const renderedComponent = mount(
-      <IntlProvider locale="en">
-        <HomePage
-          loading={false}
-          error={{ message: 'Loading failed!' }}
-        />
-      </IntlProvider>
+      <HomePage />
     );
     expect(
       renderedComponent
-        .text()
-        .indexOf('Something went wrong, please try again!')
+        .html()
+        .indexOf('Professional Blender')
       ).toBeGreaterThan(-1);
   });
 
-  it('should render fetch the repos on mount if a username exists', () => {
-    const submitSpy = expect.createSpy();
-    mount(
-      <IntlProvider locale="en">
-        <HomePage
-          username="Not Empty"
-          onChangeUsername={() => {}}
-          onSubmitForm={submitSpy}
-        />
-      </IntlProvider>
+  it('should render the "add to cart" component when the inventoryCode is 0 or 1', () => {
+    const renderedComponent = mount(
+      <HomePage inventoryCode="0" />
     );
-    expect(submitSpy).toHaveBeenCalled();
+    expect(renderedComponent.find('#addToCart')).toExist();
   });
 
-
-  describe('mapDispatchToProps', () => {
-    describe('onChangeUsername', () => {
-      it('should be injected', () => {
-        const dispatch = expect.createSpy();
-        const result = mapDispatchToProps(dispatch);
-        expect(result.onChangeUsername).toExist();
-      });
-
-      it('should dispatch changeUsername when called', () => {
-        const dispatch = expect.createSpy();
-        const result = mapDispatchToProps(dispatch);
-        const username = 'mxstbr';
-        result.onChangeUsername({ target: { value: username } });
-        expect(dispatch).toHaveBeenCalledWith(changeUsername(username));
-      });
-    });
+  it('should not render the "add to cart" component when the inventoryCode is 2', () => {
+    const renderedComponent = mount(
+      <HomePage inventoryCode="2" />
+    );
+    expect(renderedComponent.find('#addToCart').isEmpty()).toBe(true);
   });
 
-  describe('onSubmitForm', () => {
-    it('should be injected', () => {
-      const dispatch = expect.createSpy();
-      const result = mapDispatchToProps(dispatch);
-      expect(result.onSubmitForm).toExist();
-    });
+  it('should render the "pick up in store" button when the inventoryCode is 0 or 2', () => {
+    const renderedComponent = mount(
+      <HomePage inventoryCode="0" />
+    );
+    expect(renderedComponent.find('#pickupInStore')).toExist();
+  });
 
-    it('should dispatch loadRepos when called', () => {
-      const dispatch = expect.createSpy();
-      const result = mapDispatchToProps(dispatch);
-      result.onSubmitForm();
-      expect(dispatch).toHaveBeenCalledWith(loadRepos());
-    });
-
-    it('should preventDefault if called with event', () => {
-      const preventDefault = expect.createSpy();
-      const result = mapDispatchToProps(() => {});
-      const evt = { preventDefault };
-      result.onSubmitForm(evt);
-      expect(preventDefault).toHaveBeenCalledWith();
-    });
+  it('should not render the "pick up in store" component when the inventoryCode is 1', () => {
+    const renderedComponent = mount(
+      <HomePage inventoryCode="1" />
+    );
+    expect(renderedComponent.find('#pickupInStore').isEmpty()).toBe(true);
   });
 });

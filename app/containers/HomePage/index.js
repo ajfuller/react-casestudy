@@ -47,10 +47,12 @@ export default class HomePage extends React.Component {
   }
 
   addToCart(item, quantity = 1) {
+    // TODO: This is where I would dispatch an event
     alert(`added ${quantity} of ${item} to cart`);
   }
 
   pickUpInStore(item, quantity = 1) {
+    // TODO: This is where I would dispatch an event
     alert(`added ${quantity} of ${item} to cart for eventual pick up in store`);
   }
 
@@ -71,7 +73,7 @@ export default class HomePage extends React.Component {
       },
       itemDescription: itemData.ItemDescription[0].features,
       partNumber: itemData.partNumber,
-      inventoryCode: Number(itemData.inventoryCode),
+      inventoryCode: Number(this.props.inventoryCode || itemData.inventoryCode),
     };
 
     return (
@@ -82,13 +84,7 @@ export default class HomePage extends React.Component {
               <h2>{itemData.title}</h2>
             </Col>
             <Col xs={12}>
-              <ProductCarousel>
-                {
-                  item.images.map((image, index) =>
-                    <img key={`${image}${index}`} src={image} height="300" width="300" alt="" />
-                  )
-                }
-              </ProductCarousel>
+              <ProductCarousel images={item.images} />
             </Col>
           </Col>
           <Col xs={12} md={6}>
@@ -121,7 +117,7 @@ export default class HomePage extends React.Component {
                 {
                 (item.inventoryCode === 0 || item.inventoryCode === 2) ?
                   <Col xs={6} md={6}>
-                    <Button onClick={() => this.pickUpInStore(item.partNumber, this.state.quantity)}>
+                    <Button id="pickupInStore"onClick={() => this.pickUpInStore(item.partNumber, this.state.quantity)}>
                       PICK UP IN STORE
                     </Button>
                   </Col> : null
@@ -129,7 +125,7 @@ export default class HomePage extends React.Component {
                 {
                 (item.inventoryCode === 0 || item.inventoryCode === 1) ?
                   <Col xs={6} md={6}>
-                    <Button onClick={() => this.addToCart(item.partNumber, this.state.quantity)}>
+                    <Button id="addToCart" onClick={() => this.addToCart(item.partNumber, this.state.quantity)}>
                       ADD TO CART
                     </Button>
                   </Col> : null
@@ -175,3 +171,7 @@ export default class HomePage extends React.Component {
     );
   }
 }
+
+HomePage.propTypes = {
+  inventoryCode: React.PropTypes.string,
+};
