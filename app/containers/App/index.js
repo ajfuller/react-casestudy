@@ -14,27 +14,24 @@ import Header from 'components/Header';
 import Footer from 'components/Footer';
 
 const AppWrapper = styled.div`
-  max-width: calc(768px + 16px * 2);
+  max-width: 1200px;
   margin: 0 auto;
   display: flex;
   min-height: 100%;
-  padding: 0 16px;
-  flex-direction: column;
+  padding: 0 15px;
 `;
 
 function App(props) {
   return (
     <AppWrapper>
       <Helmet
-        titleTemplate="%s - React.js Boilerplate"
-        defaultTitle="React.js Boilerplate"
+        titleTemplate="%s - React.js Case Studay"
+        defaultTitle="React.js Case Study"
         meta={[
-          { name: 'description', content: 'A React.js Boilerplate application' },
+          { name: 'description', content: 'A React.js Boilerplate application for case study purposes' },
         ]}
       />
-      <Header />
       {React.Children.toArray(props.children)}
-      <Footer />
     </AppWrapper>
   );
 }

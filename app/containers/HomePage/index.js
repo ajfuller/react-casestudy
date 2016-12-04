@@ -2,134 +2,180 @@
  * HomePage
  *
  * This is the first thing users see of our App, at the '/' route
+ *
+ * NOTE: while this component should technically be a stateless functional
+ * component (SFC), hot reloading does not currently support SFCs. If hot
+ * reloading is not a necessity for you then you can refactor it and remove
+ * the linting exception.
  */
 
 import React from 'react';
-import Helmet from 'react-helmet';
-import { FormattedMessage } from 'react-intl';
-import { connect } from 'react-redux';
-import { createStructuredSelector } from 'reselect';
+import dataFixture from '../../data/pdp.json';
 
-import AtPrefix from './AtPrefix';
-import CenteredSection from './CenteredSection';
-import Form from './Form';
-import H2 from 'components/H2';
-import Input from './Input';
-import List from 'components/List';
-import ListItem from 'components/ListItem';
-import LoadingIndicator from 'components/LoadingIndicator';
-import RepoListItem from 'containers/RepoListItem';
-import Section from './Section';
-import messages from './messages';
-import { loadRepos } from '../App/actions';
-import { changeUsername } from './actions';
-import { selectUsername } from './selectors';
-import { selectRepos, selectLoading, selectError } from 'containers/App/selectors';
+import { Grid, Row, Col } from 'react-flexbox-grid';
+import ProductCarousel from '../../components/ProductCarousel';
+import QuantitySelector from '../../components/QuantitySelector';
+import ProductReviews from '../../components/ProductReviews';
 
-export class HomePage extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
-  /**
-   * when initial state username is not null, submit the form to load repos
-   */
-  componentDidMount() {
-    if (this.props.username && this.props.username.trim().length > 0) {
-      this.props.onSubmitForm();
+
+import Button from '../../components/Button';
+
+function createMarkup(content) {
+  return {__html: content};
+}
+
+
+export default class HomePage extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      quantity: 1
+    };
+
+    this.updateQuantity = this.updateQuantity.bind(this);
+  }
+
+  updateQuantity(modifier = 1) {
+    const newQuantity = this.state.quantity + modifier;
+    // Do not allow to select 0 or negative quantity
+    if (newQuantity < 1) {
+      return
     }
+    this.setState({
+      quantity: newQuantity
+    })
+  }
+  
+  addToCart(item, quantity = 1) {
+    alert(`added ${quantity} of ${item} to cart`)
+  }
+  
+  pickUpInStore(item, quantity = 1) {
+    alert(`added ${quantity} of ${item} to cart for eventual pick up in store`)
   }
 
   render() {
-    let mainContent = null;
-
-    // Show a loading indicator when we're loading
-    if (this.props.loading) {
-      mainContent = (<List component={LoadingIndicator} />);
-
-    // Show an error if there is one
-    } else if (this.props.error !== false) {
-      const ErrorComponent = () => (
-        <ListItem item={'Something went wrong, please try again!'} />
-      );
-      mainContent = (<List component={ErrorComponent} />);
-
-    // If we're not loading, don't have an error and there are repos, show the repos
-    } else if (this.props.repos !== false) {
-      mainContent = (<List items={this.props.repos} component={RepoListItem} />);
+    const itemData = dataFixture.CatalogEntryView[0];
+    const item = {
+      price: itemData.Offers[0].OfferPrice[0].formattedPriceValue,
+      priceQualifier: itemData.Offers[0].OfferPrice[0].priceQualifier,
+      images: {
+        primary: itemData.Images[0].PrimaryImage[0].image,
+        alt: itemData.Images[0].AlternateImages.map(alt => alt.image)
+      },
+      promos: itemData.Promotions.map(promo => (
+        promo.Description[0].shortDescription
+      )),
+      reviews: {
+        totalReviews: itemData.CustomerReview[0].totalReviews,
+        rating: itemData.CustomerReview[0].consolidatedOverallRating,
+        con: itemData.CustomerReview[0].Con,
+        pro: itemData.CustomerReview[0].Pro,
+      },
+      itemDescription: itemData.ItemDescription[0].features,
+      partNumber: itemData.partNumber,
+      inventoryCode: Number(itemData.inventoryCode),
     }
 
     return (
-      <article>
-        <Helmet
-          title="Home Page"
-          meta={[
-            { name: 'description', content: 'A React.js Boilerplate application homepage' },
-          ]}
-        />
-        <div>
-          <CenteredSection>
-            <H2>
-              <FormattedMessage {...messages.startProjectHeader} />
-            </H2>
-            <p>
-              <FormattedMessage {...messages.startProjectMessage} />
-            </p>
-          </CenteredSection>
-          <Section>
-            <H2>
-              <FormattedMessage {...messages.trymeHeader} />
-            </H2>
-            <Form onSubmit={this.props.onSubmitForm}>
-              <label htmlFor="username">
-                <FormattedMessage {...messages.trymeMessage} />
-                <AtPrefix>
-                  <FormattedMessage {...messages.trymeAtPrefix} />
-                </AtPrefix>
-                <Input
-                  id="username"
-                  type="text"
-                  placeholder="mxstbr"
-                  value={this.props.username}
-                  onChange={this.props.onChangeUsername}
-                />
-              </label>
-            </Form>
-            {mainContent}
-          </Section>
-        </div>
-      </article>
+      <Grid fluid style={{margin: '0 auto'}}>
+        <Row>
+          <Col xs={12} md={6}>
+            <Col xs={12}>
+              <h2>{itemData.title}</h2>
+            </Col>
+            <Col xs={12}>
+              <ProductCarousel>
+                <img src={item.images.primary} />
+                {
+                  item.images.alt.map((image, index) => {
+                    return <img key={`${image}${index}`} src={image} height="30" width="30" />
+                  })
+                }
+              </ProductCarousel>
+            </Col>
+          </Col>
+          <Col xs={12} md={6}>
+            <Col xs={12}>
+              <span>
+                <h2 style={{display: 'inline'}}>{item.price}</h2>
+                <span style={{marginLeft: '5px'}}>{item.priceQualifier}</span>
+              </span>
+            </Col>
+            <hr />
+            <Col xs={12}>
+              <ul style={{color: '#c00'}}>
+              {
+                item.promos.map((promo, index) => {
+                  return <li key={index}>{promo}</li>
+                })
+              }
+              </ul>
+            </Col>
+            <hr />
+            <Col xs={12} md={6}>
+              <span style={{margiBottom: '5px'}}>Quantity</span>
+              <QuantitySelector
+                quantity={this.state.quantity}
+                updateQuantity={this.updateQuantity}
+              />
+            </Col>
+            <Col xs={12} style={{marginTop: '15px'}}>
+              <Row>
+              { 
+                (item.inventoryCode === 0 || item.inventoryCode === 2) ?
+                  <Col xs={6} md={6}>
+                    <Button onClick={() => this.pickUpInStore(item.partNumber, this.state.quantity)}>
+                      PICK UP IN STORE
+                    </Button>
+                  </Col> : null
+              }
+              {
+                (item.inventoryCode === 0 || item.inventoryCode === 1) ?
+                  <Col xs={6} md={6}>
+                    <Button onClick={() => this.addToCart(item.partNumber, this.state.quantity)}>
+                      ADD TO CART
+                    </Button>
+                  </Col> : null
+              }
+              </Row>
+            </Col>
+            <Col xs={12} style={{margin: '15px 0'}}>
+              <Row middle="xs">
+                <Col xs={2} style={{fontSize: '19px', maxWidth: '220px'}}>Returns</Col>
+                <Col xs={10} style={{borderLeft: '1px solid #666'}}>
+                  <div style={{fontSize: '12px', paddingLeft: '5px'}} dangerouslySetInnerHTML={createMarkup(itemData.ReturnPolicy[0].legalCopy)} />
+                </Col>
+              </Row>
+            </Col>
+            <Col xs={12}>
+              <Row>
+                <Col xs={4}><Button>add to registry</Button></Col>
+                <Col xs={4}><Button>add to list</Button></Col>
+                <Col xs={4}><Button>add to share</Button></Col>
+              </Row>
+            </Col>
+            <Col xs={12}>
+              <h2>Product Highlights</h2>
+              <ul>
+              {
+                item.itemDescription.map((item, index) => (
+                  <li key={index} dangerouslySetInnerHTML={createMarkup(item)} />
+                ))
+              }
+              </ul>
+            </Col>
+          </Col>
+          <Col xs={12} md={6}>
+            <ProductReviews
+              rating={item.reviews.rating}
+              totalReviews={item.reviews.totalReviews}
+              pro={item.reviews.pro}
+              con={item.reviews.con}
+            />
+          </Col>
+      </Row>
+    </Grid>
     );
   }
 }
-
-HomePage.propTypes = {
-  loading: React.PropTypes.bool,
-  error: React.PropTypes.oneOfType([
-    React.PropTypes.object,
-    React.PropTypes.bool,
-  ]),
-  repos: React.PropTypes.oneOfType([
-    React.PropTypes.array,
-    React.PropTypes.bool,
-  ]),
-  onSubmitForm: React.PropTypes.func,
-  username: React.PropTypes.string,
-  onChangeUsername: React.PropTypes.func,
-};
-
-export function mapDispatchToProps(dispatch) {
-  return {
-    onChangeUsername: (evt) => dispatch(changeUsername(evt.target.value)),
-    onSubmitForm: (evt) => {
-      if (evt !== undefined && evt.preventDefault) evt.preventDefault();
-      dispatch(loadRepos());
-    },
-  };
-}
-
-const mapStateToProps = createStructuredSelector({
-  repos: selectRepos(),
-  username: selectUsername(),
-  loading: selectLoading(),
-  error: selectError(),
-});
-
-// Wrap the component to inject dispatch and state into it
-export default connect(mapStateToProps, mapDispatchToProps)(HomePage);
