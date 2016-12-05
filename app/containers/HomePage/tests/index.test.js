@@ -26,7 +26,11 @@ describe('<HomePage />', () => {
     const renderedComponent = mount(
       <HomePage inventoryCode="0" />
     );
+    const renderedComponent1 = mount(
+      <HomePage inventoryCode="1" />
+    );
     expect(renderedComponent.find('#addToCart')).toExist();
+    expect(renderedComponent1.find('#addToCart')).toExist();
   });
 
   it('should not render the "add to cart" component when the inventoryCode is 2', () => {
@@ -40,7 +44,11 @@ describe('<HomePage />', () => {
     const renderedComponent = mount(
       <HomePage inventoryCode="0" />
     );
+    const renderedComponent2 = mount(
+      <HomePage inventoryCode="2" />
+    );
     expect(renderedComponent.find('#pickupInStore')).toExist();
+    expect(renderedComponent2.find('#pickupInStore')).toExist();
   });
 
   it('should not render the "pick up in store" component when the inventoryCode is 1', () => {
